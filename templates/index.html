@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>SSO Tutorial</title>
+    
+</head>
+
+<body>
+    <h1>hello</h1>
+    <div id="demo"></div>
+    
+    <button class="btn btn-primary" id="signInBtn" style="display: none;">Sign in</button>
+    <button class="btn btn-primary" id="signOutBtn" style="display: none;">Sign out</button>
+    <button class="btn btn-primary" id="management" style="display: none;">Management Portal</button>
+    <h1 id="helloMsg"></h1>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src=""></script>
+</body>
+<script>
+    $(document).ready(function(){
+    
+    
+        var myUrl = window.location.protocol + '//' + window.location.hostname;
+        var ssoUrl = myUrl.replace('python-demo-try', 'portal-sso');
+        var manageUrl = 'https://portal-management.wise-paas.io/organizations'
+        document.getElementById('demo').innerHTML = myUrl;
+        
+        $('#signInBtn').click(function () {
+            window.location.href = ssoUrl + '/web/signIn.html?redirectUri=' + myUrl;
+    
+        });
+    
+        $('#signOutBtn').click(function () {
+
+            window.location.href = ssoUrl + '/web/signOut.html?redirectUri=' + myUrl;
+        });
+        $('#management').click(function () {
+
+            window.location.href = manageUrl;
+        });
+    
+        $.ajax({
+            url: ssoUrl + '/v2.0/users/me',
+            method: 'GET',
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function (user) {
+            $('#signOutBtn').show();
+            $('#management').show();
+            $('#helloMsg').text('Hello, ' + user.firstName + ' ' + user.lastName + '!');
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            
+            $('#signInBtn').show();
+            
+            $('#helloMsg').text('Hi, please sign in first.');
+        });
+        
+    });
+</script>
+
+</html>
